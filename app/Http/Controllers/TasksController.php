@@ -60,7 +60,11 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        //
+        $task = Task::find($id);
+        
+        return view('tasks.show', [
+            'task' => $task,
+            ]);
     }
 
     /**
@@ -73,10 +77,11 @@ class TasksController extends Controller
     {
         $task = Task::find($id);
         
-        return view('task.edit', [
+        return view('tasks.edit', [
             'task' => $task,
             ]);
-    }
+        }
+    
 
     /**
      * Update the specified resource in storage.
@@ -85,6 +90,7 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+     
     public function update(Request $request, $id)
     {
         $task = Task::find($id);
