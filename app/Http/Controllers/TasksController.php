@@ -16,18 +16,33 @@ class TasksController extends Controller
     
     public function index()
     {
-        $tasks = Task::all();
+        if (\Auth::check()) {
+            $user= \Auth::user();
+            $tasks = $user->tasks;
+            return view('tasks.index', [
+                'tasks' => $tasks,
+            ]);
+            
+            
+        }else {
+            return view('welcome');
+        }
         
-        return view('tasks.index', [
-           'tasks' => $tasks,
-           ]);
+        
     }
+    
+    
+    
 
-    /**
+
+     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
+     
+     
+     
     public function create()
     {
         $task = new Task;
@@ -52,6 +67,8 @@ class TasksController extends Controller
         $task = new Task;
         $task->status = $request->status;
         $task->content = $request->content;
+        $task->user_id = \Auth::user()->id;
+        $task->save();
         
         return redirect('/');
     }
@@ -66,9 +83,16 @@ class TasksController extends Controller
     {
         $task = Task::find($id);
         
-        return view('tasks.show', [
-            'task' => $task,
+        if ($task->user_id == \Auth::user()->id) {
+            return view('tasks.show', [
+                'task' => $task,
             ]);
+            
+        } else {
+            return redirect('/');
+        }
+        
+        
     }
 
     /**
@@ -77,14 +101,19 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+     
     public function edit($id)
     {
         $task = Task::find($id);
-        
+        if($task->user_id == \Auth::user()->id) {
         return view('tasks.edit', [
             'task' => $task,
-            ]);
+        ]);
+        
+        }else {
+            return redirect('/');
         }
+    }
     
 
     /**
